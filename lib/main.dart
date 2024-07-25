@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:inventory_test/pages/add-item_page.dart';
-import 'package:inventory_test/pages/home_page.dart';
+import 'package:inventory_test/screen/pages/add-item_page.dart';
+import 'package:inventory_test/screen/pages/edit-item_page.dart';
+import 'package:inventory_test/screen/pages/home_page.dart';
+import 'package:inventory_test/screen/pages/search_page.dart';
 import 'package:inventory_test/shared/styles.dart';
 
 void main() {
@@ -31,6 +33,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomePage(),
         '/add-item': (context) => const AddItemPage(),
+        '/edit-item': (context) => const EditItemPage(),
+        '/search': (context) => const SearchPage(),
       },
     );
   }

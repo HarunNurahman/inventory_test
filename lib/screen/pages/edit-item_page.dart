@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:inventory_test/screen/widgets/custom_button.dart';
 import 'package:inventory_test/shared/styles.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class EditItemPage extends StatelessWidget {
+  const EditItemPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: addItemButton(
-        onPressed: () => Navigator.pushNamed(context, '/add-item'),
-      ),
+      bottomNavigationBar: deleteAll(),
       appBar: appBar(),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -27,10 +26,6 @@ class HomePage extends StatelessWidget {
 
   AppBar appBar() {
     return AppBar(
-      leading: IconButton(
-        onPressed: () {},
-        icon: Icon(Icons.arrow_back, color: blackColor),
-      ),
       actions: [
         IconButton(
           onPressed: () {},
@@ -54,13 +49,6 @@ class HomePage extends StatelessWidget {
             '629 Data Ditampilkan',
             style: grayTextStyle.copyWith(fontSize: 12),
           ),
-          Text(
-            'Edit Data',
-            style: blueTextStyle.copyWith(
-              fontSize: 12,
-              fontWeight: medium,
-            ),
-          )
         ],
       ),
     );
@@ -68,7 +56,6 @@ class HomePage extends StatelessWidget {
 
   Widget contentList() {
     return Expanded(
-      flex: 1,
       child: ListView.separated(
         itemCount: 5,
         itemBuilder: (context, index) {
@@ -77,21 +64,28 @@ class HomePage extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Text(
-                        '[Nama Barang]',
-                        style: blackTextStyle.copyWith(
-                          fontWeight: medium,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '[Stok]',
-                        style: grayTextStyle.copyWith(fontSize: 12),
+                      // Checkbox
+                      Checkbox(value: false, onChanged: (value) {}),
+                      // Item information
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '[Nama Barang]',
+                            style: blackTextStyle.copyWith(
+                              fontWeight: medium,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '[Stok]',
+                            style: grayTextStyle.copyWith(fontSize: 12),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -111,27 +105,26 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget addItemButton({VoidCallback? onPressed}) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        maximumSize: const Size(120, 50),
-        padding: const EdgeInsets.all(8),
-        backgroundColor: navyColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(50),
-        ),
-      ),
+  Widget deleteAll() {
+    return Container(
+      width: double.infinity,
+      height: 70,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(color: whiteColor),
       child: Row(
         children: [
-          Icon(Icons.add, size: 32, color: whiteColor),
-          const SizedBox(width: 4),
+          Checkbox(value: false, onChanged: (value) {}),
+          const SizedBox(width: 12),
           Text(
-            'Barang',
-            style: whiteTextStyle.copyWith(
-              fontSize: 16,
+            'Pilih Semua',
+            style: blackTextStyle.copyWith(
+              fontSize: 12,
               fontWeight: medium,
             ),
+          ),
+          const Spacer(),
+          CustomDeleteButton(
+            onPressed: () {},
           )
         ],
       ),
