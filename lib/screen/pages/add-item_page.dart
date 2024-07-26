@@ -6,14 +6,12 @@ import 'package:inventory_test/model/kategori_model.dart';
 import 'package:inventory_test/screen/widgets/custom_textform.dart';
 import 'package:inventory_test/shared/styles.dart';
 
-class AddItemPage extends StatefulWidget {
-  const AddItemPage({super.key});
+class AddItemPage extends StatelessWidget {
+  final BarangModel? barang;
+  final GlobalController globalController = Get.put(GlobalController());
+  AddItemPage({super.key, this.barang});
 
-  @override
-  State<AddItemPage> createState() => _AddItemPageState();
-}
 
-class _AddItemPageState extends State<AddItemPage> {
   TextEditingController namaBarangController = TextEditingController();
   TextEditingController kategoriBarangController = TextEditingController();
   TextEditingController kelompokBarangController = TextEditingController();
@@ -23,71 +21,53 @@ class _AddItemPageState extends State<AddItemPage> {
   final formKey = GlobalKey<FormState>();
   String? _errorMessage;
 
-  bool get isFormValid {
-    return namaBarangController.text.isEmpty &&
-        kategoriBarangController.text.isEmpty &&
-        kelompokBarangController.text.isEmpty &&
-        stokController.text.isEmpty &&
-        hargaController.text.isEmpty;
-  }
-
-  @override
-  void initState() {
-    namaBarangController.addListener(_onTextFieldChanged);
-    kategoriBarangController.addListener(_onTextFieldChanged);
-    kelompokBarangController.addListener(_onTextFieldChanged);
-    stokController.addListener(_onTextFieldChanged);
-    hargaController.addListener(_onTextFieldChanged);
-    super.initState();
-  }
-
-  void _onTextFieldChanged() {
-    setState(() {});
-  }
-
-  final GlobalController globalController = Get.put(GlobalController());
-
-  @override
-  void dispose() {
-    // Disposing all TextEditingController
-    namaBarangController.dispose();
-    kategoriBarangController.dispose();
-    kelompokBarangController.dispose();
-    stokController.dispose();
-    hargaController.dispose();
-    super.dispose();
-  }
-
+  // bool get isFormValid {
   @override
   Widget build(BuildContext context) {
+    final BarangModel? barang =
+        ModalRoute.of(context)!.settings.arguments as BarangModel?;
+
+    if (barang != null) {
+      namaBarangController.text = barang.namaBarang!;
+      kategoriBarangController.text = barang.namaKategori!;
+      kelompokBarangController.text = barang.kelompokBarang!;
+      stokController.text = barang.stok.toString();
+      hargaController.text = barang.harga.toString();
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Tambah Barang'), centerTitle: false),
+      appBar: AppBar(
+        title: Text(barang == null ? 'Tambah Barang' : 'Edit Barang'),
+        centerTitle: false,
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
         child: Obx(() {
           KategoriModel kategori = globalController.kategori[0];
           return ElevatedButton(
-            onPressed: isFormValid
-                ? null
-                : () {
-                    if (formKey.currentState!.validate()) {
-                      final newBarang = BarangModel(
-                        namaBarang: namaBarangController.text,
-                        kategoriId: kategori.id,
-                        kelompokBarang: kelompokBarangController.text,
-                        stok: int.parse(stokController.text),
-                        harga: int.parse(hargaController.text),
-                      );
-                      globalController.addProduct(newBarang);
-                      Navigator.pop(context);
-                    }
-                  },
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                BarangModel newBarang = BarangModel(
+                  namaBarang: namaBarangController.text,
+                  kategoriId: kategori.id,
+                  kelompokBarang: kelompokBarangController.text,
+                  stok: int.parse(stokController.text),
+                  harga: int.parse(hargaController.text),
+                );
+                if (barang == null) {
+                  globalController.addProduct(newBarang);
+                } else {
+                  globalController.updateProduct(newBarang);
+                }
+                Navigator.pop(context);
+              }
+            },
             style: ElevatedButton.styleFrom(
               elevation: 0,
               backgroundColor: navyColor,
             ),
             child: Text(
-              'Tambah Barang',
+              barang == null ? 'Tambah Barang' : 'Edit Barang',
               style: whiteTextStyle.copyWith(fontWeight: medium),
             ),
           );

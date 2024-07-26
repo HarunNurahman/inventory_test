@@ -50,4 +50,27 @@ class GlobalController extends GetxController {
       isLoading(false);
     }
   }
+
+  Future<void> deleteBarang(int id) async {
+    try {
+      isLoading(true);
+      await ApiService().deleteProduct(id);
+      fetchBarang();
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  void updateProduct(BarangModel barang) async {
+    try {
+      isLoading(true);
+      bool isUpdate = await ApiService.updateProduct(barang);
+      if (isUpdate) {
+        fetchBarang();
+      }
+      fetchBarang();
+    } finally {
+      isLoading(false);
+    }
+  }
 }

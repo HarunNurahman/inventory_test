@@ -259,11 +259,50 @@ class HomePage extends StatelessWidget {
                   children: [
                     // Delete button
                     CustomDeleteButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text(
+                              'Hapus Data?',
+                              style: blackTextStyle,
+                            ),
+                            content: Text(
+                              'Apakah anda yakin ingin menghapus ${item.namaBarang}?',
+                              style: grayTextStyle,
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  globalController.deleteBarang(item.id!);
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'Ya',
+                                  style: redTextStyle.copyWith(),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(
+                                  'Tidak',
+                                  style: blackTextStyle.copyWith(),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                     // Edit button
                     CustomEditButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          '/add-item',
+                          arguments: item,
+                        );
+                      },
                     ),
                   ],
                 ),
