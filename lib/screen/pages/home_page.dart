@@ -1,37 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:inventory_test/controller/global_controller.dart';
+import 'package:inventory_test/model/barang_model.dart';
 import 'package:inventory_test/screen/widgets/custom_button.dart';
+import 'package:inventory_test/shared/shared_method.dart';
 import 'package:inventory_test/shared/styles.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HomePage extends StatelessWidget {
+  HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
+  final GlobalController globalController = Get.put(GlobalController());
 
-class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: addItemButton(
         onPressed: () => Navigator.pushNamed(context, '/add-item'),
       ),
-      appBar: appBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Column(
-          children: [
-            // Heading
-            heading(),
-            // List content
-            contentList(),
-          ],
-        ),
-      ),
+      appBar: appBar(context),
+      body: Obx(() {
+        if (globalController.isLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (globalController.barang.isEmpty) {
+          return Center(child: Text('No Data', style: blackTextStyle));
+        }
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              // Heading
+              heading(context),
+              // List content
+              contentList(),
+            ],
+          ),
+        );
+      }),
     );
   }
 
-  AppBar appBar() {
+  AppBar appBar(BuildContext context) {
     return AppBar(
       // Back button
       leading: IconButton(
@@ -52,7 +60,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget heading() {
+  Widget heading(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 24, bottom: 24),
       child: Row(
@@ -60,7 +68,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           // Total items
           Text(
-            '629 Data Ditampilkan',
+            '${globalController.barang.length} Data Ditampilkan',
             style: grayTextStyle.copyWith(fontSize: 12),
           ),
           // Edit button
@@ -81,51 +89,55 @@ class _HomePageState extends State<HomePage> {
 
   Widget contentList() {
     return Expanded(
-      child: ListView.separated(
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-            // Bottom sheet when click on item
-            onTap: () {
-              showBottomSheet();
-            },
-            child: Row(
-              children: [
-                // Item Information
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '[Nama Barang]',
-                          style: blackTextStyle.copyWith(
-                            fontWeight: medium,
+      child: RefreshIndicator(
+        onRefresh: globalController.fetchBarang,
+        child: ListView.separated(
+          itemCount: globalController.barang.length,
+          itemBuilder: (context, index) {
+            BarangModel item = globalController.barang[index];
+            return GestureDetector(
+              // Bottom sheet when click on item
+              onTap: () {
+                showBottomSheet(context, item);
+              },
+              child: Row(
+                children: [
+                  // Item Information
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.namaBarang!,
+                            style: blackTextStyle.copyWith(
+                              fontWeight: medium,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '[Stok]',
-                          style: grayTextStyle.copyWith(fontSize: 12),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            'Stok: ${item.stok}',
+                            style: grayTextStyle.copyWith(fontSize: 12),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Text(
-                  '[Harga]',
-                  style: blackTextStyle.copyWith(
-                    fontWeight: medium,
+                  Text(
+                    AppFormat().formatCurrency(item.harga!),
+                    style: blackTextStyle.copyWith(
+                      fontWeight: medium,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
-        separatorBuilder: (context, index) => Divider(color: grayColor),
+                ],
+              ),
+            );
+          },
+          separatorBuilder: (context, index) => Divider(color: grayColor),
+        ),
       ),
     );
   }
@@ -175,7 +187,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<dynamic> showBottomSheet() {
+  Future<dynamic> showBottomSheet(BuildContext context, BarangModel item) {
     return showModalBottomSheet<dynamic>(
       isScrollControlled: true,
       context: context,
@@ -206,13 +218,13 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: Column(
                   children: [
-                    itemList('Nama Barang', '-'),
+                    itemList('Nama Barang', item.namaBarang!),
                     Divider(color: grayColor),
-                    itemList('Kategori', '-'),
+                    itemList('Kategori', item.namaKategori!),
                     Divider(color: grayColor),
-                    itemList('Kelompok', '-'),
+                    itemList('Kelompok', item.kelompokBarang!),
                     Divider(color: grayColor),
-                    itemList('Stok', '-'),
+                    itemList('Stok', item.stok.toString()),
                   ],
                 ),
               ),
@@ -233,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Text('Harga', style: blackTextStyle),
                     Text(
-                      'Rp.-,',
+                      AppFormat().formatCurrency(item.harga!),
                       style: blackTextStyle.copyWith(fontWeight: bold),
                     )
                   ],

@@ -3,10 +3,10 @@ import 'package:inventory_test/shared/styles.dart';
 
 class CustomTextForm extends StatelessWidget {
   final String labelText;
-  final String Function(String?)? validator;
+  final String? Function(String?)? validator;
   final TextEditingController? controller;
-  final String Function(String?)? onChanged;
-  final String Function(String?)? onFieldSubmitted;
+  final String? Function(String?)? onChanged;
+  final String? Function(String?)? onFieldSubmitted;
   final TextInputType keyboardType;
   final String hintText;
   final String? errorMessage;

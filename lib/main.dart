@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:inventory_test/screen/pages/add-item_page.dart';
 import 'package:inventory_test/screen/pages/edit-item_page.dart';
 import 'package:inventory_test/screen/pages/home_page.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: whiteColor,
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       routes: {
-        '/': (context) => const HomePage(),
+        '/': (context) => HomePage(),
         '/add-item': (context) => const AddItemPage(),
         '/edit-item': (context) => const EditItemPage(),
         '/search': (context) => const SearchPage(),
