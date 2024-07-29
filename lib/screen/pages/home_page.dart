@@ -260,6 +260,7 @@ class HomePage extends StatelessWidget {
                     // Delete button
                     CustomDeleteButton(
                       onPressed: () {
+                        Navigator.pop(context);
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
@@ -297,11 +298,8 @@ class HomePage extends StatelessWidget {
                     // Edit button
                     CustomEditButton(
                       onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/add-item',
-                          arguments: item,
-                        );
+                        Navigator.pop(context);
+                        Get.toNamed('/add-item', arguments: item);
                       },
                     ),
                   ],

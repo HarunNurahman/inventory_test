@@ -6,11 +6,11 @@ import 'package:inventory_test/model/kategori_model.dart';
 import 'package:inventory_test/screen/widgets/custom_textform.dart';
 import 'package:inventory_test/shared/styles.dart';
 
+// ignore: must_be_immutable
 class AddItemPage extends StatelessWidget {
   final BarangModel? barang;
-  final GlobalController globalController = Get.put(GlobalController());
+  final GlobalController globalController = Get.find();
   AddItemPage({super.key, this.barang});
-
 
   TextEditingController namaBarangController = TextEditingController();
   TextEditingController kategoriBarangController = TextEditingController();
@@ -21,7 +21,7 @@ class AddItemPage extends StatelessWidget {
   final formKey = GlobalKey<FormState>();
   String? _errorMessage;
 
-  // bool get isFormValid {
+
   @override
   Widget build(BuildContext context) {
     final BarangModel? barang =
@@ -48,6 +48,7 @@ class AddItemPage extends StatelessWidget {
             onPressed: () async {
               if (formKey.currentState!.validate()) {
                 BarangModel newBarang = BarangModel(
+                  id: barang?.id,
                   namaBarang: namaBarangController.text,
                   kategoriId: kategori.id,
                   kelompokBarang: kelompokBarangController.text,
@@ -58,6 +59,8 @@ class AddItemPage extends StatelessWidget {
                   globalController.addProduct(newBarang);
                 } else {
                   globalController.updateProduct(newBarang);
+                  print('update product');
+                  print(newBarang.toJson());
                 }
                 Navigator.pop(context);
               }

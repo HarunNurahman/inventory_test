@@ -61,13 +61,10 @@ class GlobalController extends GetxController {
     }
   }
 
-  void updateProduct(BarangModel barang) async {
+  void updateProduct(BarangModel updateBarang) async {
     try {
       isLoading(true);
-      bool isUpdate = await ApiService.updateProduct(barang);
-      if (isUpdate) {
-        fetchBarang();
-      }
+      await ApiService.updateProduct(updateBarang);
       fetchBarang();
     } finally {
       isLoading(false);

@@ -5,13 +5,13 @@ import 'package:http/http.dart' as http;
 import 'package:inventory_test/model/kategori_model.dart';
 
 class ApiService {
-  String baseUrl = 'http://192.168.18.14/api';
+  static const String baseUrl = 'http://192.168.1.5/api';
 
   // API for fetch barang table
   Future<List<BarangModel>> getBarang() async {
-    final response = await http.get(Uri.parse('$baseUrl/read.php'));
-
     try {
+      final response = await http.get(Uri.parse('$baseUrl/read.php'));
+
       if (response.statusCode == 200) {
         return jsonDecode(response.body)
             .map<BarangModel>((e) => BarangModel.fromJson(e))
@@ -26,9 +26,9 @@ class ApiService {
 
   // API for fetch kategori table
   Future<List<KategoriModel>> getKategori() async {
-    final response = await http.get(Uri.parse('$baseUrl/kategori.php'));
-
     try {
+      final response = await http.get(Uri.parse('$baseUrl/kategori.php'));
+
       if (response.statusCode == 200) {
         return jsonDecode(response.body)
             .map<KategoriModel>((e) => KategoriModel.fromJson(e))
@@ -56,13 +56,13 @@ class ApiService {
 
   // API for Delete Barang
   Future<bool> deleteProduct(int id) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl/delete.php?id=$id'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(id),
-    );
-
     try {
+      final response = await http.delete(
+        Uri.parse('$baseUrl/delete.php?id=$id'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(id),
+      );
+
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
         if (jsonResponse['message'] == "Record deleted successfully") {
@@ -78,21 +78,19 @@ class ApiService {
     }
   }
 
-  static Future<bool> updateProduct(BarangModel product) async {
+  static Future<void> updateProduct(BarangModel product) async {
     try {
-      final response = await http.put(
-        Uri.parse('http://192.168.18.14/api/update.php'),
+      final response = await http.post(
+        Uri.parse('$baseUrl/update.php?id=${product.id}'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(product.toJson()),
       );
 
-      if (response.statusCode == 200) {
-        return true;
-      } else {
-        return false;
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update data');
       }
     } catch (e) {
-      throw Exception('Failed to update product');
+      throw Exception('Failed to update product $e');
     }
   }
 }
